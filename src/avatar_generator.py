@@ -11,18 +11,22 @@ class AvatarGenerator:
         self.elevenlabs_api_key = os.getenv('ELEVENLABS_API_KEY')
         self.d_id_api_url = "https://api.d-id.com"
         
-        # Celebrity voice mapping (ElevenLabs voice IDs)
-        self.celebrity_voices = {
+        # Voice mapping (ElevenLabs voice IDs)
+        self.voice_mapping = {
             "Donald Trump": "trump_voice_id",
             "Barack Obama": "obama_voice_id",
-            "Samuel L Jackson": "jackson_voice_id"
+            "Samuel L Jackson": "jackson_voice_id",
+            "Male Reporter": "male_reporter_voice_id",  # Add appropriate ElevenLabs voice ID
+            "Female Reporter": "female_reporter_voice_id"  # Add appropriate ElevenLabs voice ID
         }
         
-        # Celebrity image mapping (D-ID presenter IDs)
-        self.celebrity_images = {
+        # Image mapping (D-ID presenter IDs)
+        self.presenter_mapping = {
             "Donald Trump": "trump_presenter_id",
             "Barack Obama": "obama_presenter_id",
-            "Samuel L Jackson": "jackson_presenter_id"
+            "Samuel L Jackson": "jackson_presenter_id",
+            "Male Reporter": "13c0eed0-1b85-4896-9378-5f650e8ee2f1",  # Default D-ID male presenter
+            "Female Reporter": "bae3d0dd-6443-4555-9532-6341aa1a9105"  # Default D-ID female presenter
         }
         
     def create_video(self, story: str, celebrity: str) -> str:
@@ -63,12 +67,13 @@ class AvatarGenerator:
             str: Path to generated audio file
         """
         try:
-            voice_id = self.celebrity_voices[celebrity]
+            voice_id = self.voice_mapping[celebrity]
             
             audio = generate(
                 text=text,
                 voice=voice_id,
-                model="eleven_multilingual_v2"
+                model="eleven_multilingual_v2",
+                language="el"  # Specify Greek language
             )
             
             audio_path = f"temp_{int(time.time())}.mp3"
@@ -92,7 +97,7 @@ class AvatarGenerator:
         """
         try:
             # 1. Create talk
-            presenter_id = self.celebrity_images[celebrity]
+            presenter_id = self.presenter_mapping[celebrity]
             
             with open(audio_path, 'rb') as audio_file:
                 create_talk_response = requests.post(
