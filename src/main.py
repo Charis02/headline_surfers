@@ -9,33 +9,12 @@ from story_generator import StoryGenerator
 # from avatar_generator import AvatarGenerator
 # from video_creator import VideoCreator
 # from tiktok_poster import TikTokPoster
+from pathlib import Path
+from dotenv import load_dotenv
+from video_creator import VideoCreator
+from test_avatar import test_story  # Import the test story
 
-# Debug: Print current working directory and environment info
-print(f"Current working directory: {os.getcwd()}")
-print(f"Environment variables before loading: {os.environ.get('GEMINI_API_KEY', 'Not found')}")
-
-# Debug: Find and load .env file
-env_path = find_dotenv()
-print(f"Found .env file at: {env_path}")
-
-if not env_path:
-    raise Exception("No .env file found!")
-
-if not os.path.isfile(env_path):
-    raise Exception(f".env file not found at {env_path}")
-
-# Try to read the .env file directly
-try:
-    with open(env_path, 'r') as f:
-        print("Raw .env contents:")
-        print(f.read())
-except Exception as e:
-    print(f"Error reading .env file: {str(e)}")
-
-# Load environment variables from .env file in project root
-loaded = load_dotenv(dotenv_path=env_path, verbose=True, override=True)
-print(f"Environment loaded successfully: {loaded}")
-print(f"Environment variables after loading: {os.environ.get('GEMINI_API_KEY', 'Not found')}")
+load_dotenv()
 
 def parse_args():
     parser = argparse.ArgumentParser(description='Generate TikTok news videos with celebrity avatars')
@@ -47,37 +26,21 @@ def parse_args():
     return parser.parse_args()
 
 def main():
-    args = parse_args()
-    
-    print(f"GEMINI_API_KEY: {os.getenv('GEMINI_API_KEY')}")
-    
-    # Initialize components
-    news_fetcher = NewsFetcher(api_key=os.getenv('GEMINI_API_KEY'))
-    story_generator = StoryGenerator(api_key=os.getenv('GEMINI_API_KEY'))
-
-    # avatar_generator = AvatarGenerator()
-    # video_creator = VideoCreator()
-    # tiktok_poster = TikTokPoster()
+    # Initialize video creator
+    video_creator = VideoCreator()
     
     try:
-        # 1. Fetch top Greek news articles
-        articles = news_fetcher.fetch_articles(args.date)
+        # Use the Greek audio file
+        audio_path = "test_news_audio.mp3"
         
-        # 2. Generate Gen Z story from articles
-        story = story_generator.generate_story(articles)
-
-        print(f"Story: {story}")
+        if not os.path.exists(audio_path):
+            print(f"Error: Greek audio file not found at {audio_path}")
+            print("Please run test_avatar.py first to generate the Greek audio")
+            return
         
-        # 3. Create avatar video
-        avatar_video = avatar_generator.create_video(story, args.celebrity)
-        
-        # 4. Combine with Subway Surfers footage
-        final_video = video_creator.create_tiktok_video(avatar_video)
-        
-        # 5. Post to TikTok
-        video_url = tiktok_poster.post_video(final_video, story[:100])  # Use first 100 chars as caption
-        
-        print(f"Successfully created and posted video: {video_url}")
+        # Create TikTok video with the actual text
+        final_video = video_creator.create_tiktok_video(audio_path, test_story)
+        print(f"Successfully created video: {final_video}")
         
     except Exception as e:
         print(f"Error occurred: {str(e)}")
