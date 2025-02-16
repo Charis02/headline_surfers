@@ -1,16 +1,41 @@
 import os
 import argparse
 from datetime import datetime
-from dotenv import load_dotenv
+from dotenv import load_dotenv, find_dotenv
 from typing import List, Dict
 
 from news_fetcher import NewsFetcher
 from story_generator import StoryGenerator
-from avatar_generator import AvatarGenerator
-from video_creator import VideoCreator
-from tiktok_poster import TikTokPoster
+# from avatar_generator import AvatarGenerator
+# from video_creator import VideoCreator
+# from tiktok_poster import TikTokPoster
 
-load_dotenv()
+# Debug: Print current working directory and environment info
+print(f"Current working directory: {os.getcwd()}")
+print(f"Environment variables before loading: {os.environ.get('GEMINI_API_KEY', 'Not found')}")
+
+# Debug: Find and load .env file
+env_path = find_dotenv()
+print(f"Found .env file at: {env_path}")
+
+if not env_path:
+    raise Exception("No .env file found!")
+
+if not os.path.isfile(env_path):
+    raise Exception(f".env file not found at {env_path}")
+
+# Try to read the .env file directly
+try:
+    with open(env_path, 'r') as f:
+        print("Raw .env contents:")
+        print(f.read())
+except Exception as e:
+    print(f"Error reading .env file: {str(e)}")
+
+# Load environment variables from .env file in project root
+loaded = load_dotenv(dotenv_path=env_path, verbose=True, override=True)
+print(f"Environment loaded successfully: {loaded}")
+print(f"Environment variables after loading: {os.environ.get('GEMINI_API_KEY', 'Not found')}")
 
 def parse_args():
     parser = argparse.ArgumentParser(description='Generate TikTok news videos with celebrity avatars')
@@ -24,12 +49,15 @@ def parse_args():
 def main():
     args = parse_args()
     
+    print(f"GEMINI_API_KEY: {os.getenv('GEMINI_API_KEY')}")
+    
     # Initialize components
-    news_fetcher = NewsFetcher()
-    story_generator = StoryGenerator()
-    avatar_generator = AvatarGenerator()
-    video_creator = VideoCreator()
-    tiktok_poster = TikTokPoster()
+    news_fetcher = NewsFetcher(api_key=os.getenv('GEMINI_API_KEY'))
+    story_generator = StoryGenerator(api_key=os.getenv('GEMINI_API_KEY'))
+
+    # avatar_generator = AvatarGenerator()
+    # video_creator = VideoCreator()
+    # tiktok_poster = TikTokPoster()
     
     try:
         # 1. Fetch top Greek news articles
@@ -37,6 +65,8 @@ def main():
         
         # 2. Generate Gen Z story from articles
         story = story_generator.generate_story(articles)
+
+        print(f"Story: {story}")
         
         # 3. Create avatar video
         avatar_video = avatar_generator.create_video(story, args.celebrity)
