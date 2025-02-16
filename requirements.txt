@@ -1,0 +1,12 @@
+python-dotenv==1.0.0
+openai==1.12.0
+requests==2.31.0
+moviepy==1.0.3
+python-tiktok-api==0.1.8
+newsapi-python==0.2.7
+pillow==10.2.0
+elevenlabs==0.3.0
+google-cloud-translate==3.12.0
+pytest==8.0.0
+black==24.1.1
+isort==5.13.2 
