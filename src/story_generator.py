@@ -6,8 +6,8 @@ class StoryGenerator:
     def __init__(self, api_key: str):
         self.api_key = api_key
         self.base_url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent"
-        print(f"API key: {self.api_key}")
-    def generate_story(self, articles: List[Dict]) -> str:
+        
+    def generate_story(self, articles: List[Dict], date: str) -> str:
         """
         Generate a Gen Z style story from the news articles in Greek.
         
@@ -34,21 +34,23 @@ class StoryGenerator:
             # Prepare the context from articles
             context = self._prepare_context(articles)
             
-            prompt = """You are a Gen Z content creator who needs to transform formal news into engaging, 
-            casual Greek content for a digital avatar to present. Use modern Greek slang, emojis, and Gen Z speaking style. 
-            Keep the content informative but make it sound like a friend telling a story.
+            prompt = f"""You are a Gen Z content creator who needs to transform formal news into engaging, 
+            casual Greek content for a digital avatar to present. This is a news recap for {date}. Use modern Greek slang, emojis, 
+            and Gen Z speaking style. Keep the content informative but make it sound like a friend telling a story. Don't use any 
+            emojis in the text.
             The story should be around 1-2 minutes when spoken.
 
             Use the following markers in the text:
-            - [PAUSE] for natural pauses between topics
-            - [EMPHASIS] for words that should be emphasized
-            - [EXCITED] for excited tone
-            - [SERIOUS] for serious tone
-            - [CURIOUS] for curious/questioning tone
-            - [SMILE] for moments where the avatar should smile
-            - [THINKING] for contemplative moments
+            - [BREAK] for natural pauses between sentences (single marker, adds 500ms pause)
+            - [LONG_BREAK] for longer pauses between topics (single marker, adds 800ms pause)
+n            - [PITCH_MEDIUM] for curious or questioning tone (needs closing tag [/PITCH_MEDIUM])
+            - [SLOW] for serious or contemplative moments (needs closing tag [/SLOW])
+            - [FAST] for energetic or enthusiastic moments (needs closing tag [/FAST])
+            - [VOLUME_UP] for emphasized points (needs closing tag [/VOLUME_UP])
 
-            Here are today's top news articles:
+            Important: BREAK and LONG_BREAK are single markers and do not need closing tags. Never use [/BREAK] or [/LONG_BREAK].
+
+            Here are today's ({date}) top news articles:
             """ + context + """
             
             Create a compelling story that combines these news items in an engaging way for Greek Gen Z audience.
@@ -56,13 +58,14 @@ class StoryGenerator:
             to guide the avatar's presentation.
             
             The story MUST:
-            1. Include at least 3 emotion markers
-            2. Be between 150-450 words long
-            3. Use [SERIOUS] for political/economic news
-            4. Use [EXCITED] for positive developments
-            5. Use [THINKING] for analysis/statistics
-            6. Include [PAUSE] between topics
-            7. Use [EMPHASIS] for key points or statistics"""
+            1. Start with a greeting and mention that this is a news recap for {date}
+            2. Include at least 5 different types of markers
+            3. Be between 150-450 words long
+            4. Use [SLOW] for political/economic news
+            5. Use [PITCH_HIGH] and [FAST] for positive developments
+            6. Use [PITCH_MEDIUM] for curious/questioning moments
+            7. Use [BREAK] between sentences and [LONG_BREAK] between topics
+            8. Use [VOLUME_UP] for key statistics or important announcements"""
             
             # Make the API request
             response = requests.post(
@@ -87,7 +90,7 @@ class StoryGenerator:
                 story = result['candidates'][0]['content']['parts'][0]['text'].strip()
                 
                 # Verify story meets requirements
-                if not any(marker in story for marker in ['[PAUSE]', '[EMPHASIS]', '[EXCITED]', '[SERIOUS]', '[CURIOUS]', '[SMILE]', '[THINKING]']):
+                if not any(marker in story for marker in ['[BREAK]', '[LONG_BREAK]', '[PITCH_HIGH]', '[PITCH_MEDIUM]', '[SLOW]', '[FAST]', '[VOLUME_UP]']):
                     raise Exception("Error generating story: Generated content does not contain required emotion markers")
                     
                 words = len(story.split())
