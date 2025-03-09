@@ -3,6 +3,7 @@ import json
 import os
 from elevenlabs.client import ElevenLabs
 from elevenlabs import save
+import re
 
 class AudioGenerator:
     def __init__(self, api_key):
@@ -35,7 +36,26 @@ class AudioGenerator:
             '[FAST]': '<prosody rate="120%">',
             '[/FAST]': '</prosody>',
             '[VOLUME_UP]': '<prosody volume="+4db">',
-            '[/VOLUME_UP]': '</prosody>'
+            '[/VOLUME_UP]': '</prosody>',
+            
+            '[ΠΑΥΣΗ]': '<break time="600ms"/>',
+            '[/ΠΑΥΣΗ]': '',
+            '[ΕΜΦΑΣΗ]': '<prosody volume="+4db" pitch="+15%">',
+            '[/ΕΜΦΑΣΗ]': '</prosody>',
+            '[ΕΝΘΟΥΣΙΑΣΜΟΣ]': '<prosody rate="115%" pitch="+25%" volume="+3db">',
+            '[/ΕΝΘΟΥΣΙΑΣΜΟΣ]': '</prosody>',
+            '[ΣΟΒΑΡΟΤΗΤΑ]': '<prosody rate="90%" pitch="-10%">',
+            '[/ΣΟΒΑΡΟΤΗΤΑ]': '</prosody>',
+            '[ΠΕΡΙΕΡΓΕΙΑ]': '<prosody pitch="+15%" rate="105%">',
+            '[/ΠΕΡΙΕΡΓΕΙΑ]': '</prosody>',
+            '[ΧΑΜΟΓΕΛΟ]': '<prosody pitch="+10%" rate="110%">',
+            '[/ΧΑΜΟΓΕΛΟ]': '</prosody>',
+            '[ΣΚΕΨΗ]': '<prosody rate="85%" pitch="-5%">',
+            '[/ΣΚΕΨΗ]': '</prosody>',
+            '[ΕΙΡΩΝΕΙΑ]': '<prosody pitch="+20%" rate="95%">',
+            '[/ΕΙΡΩΝΕΙΑ]': '</prosody>',
+            '[ΕΚΠΛΗΞΗ]': '<prosody pitch="+30%" rate="120%" volume="+4db">',
+            '[/ΕΚΠΛΗΞΗ]': '</prosody>'
         }
         
         # Apply replacements
@@ -76,6 +96,22 @@ class AudioGenerator:
         formatted_text = formatted_text.replace(". ", ". <break time='300ms'/>")
         formatted_text = formatted_text.replace("! ", "! <break time='400ms'/>")
         formatted_text = formatted_text.replace("? ", "? <break time='400ms'/>")
+        
+        # Remove emojis as they can cause issues with TTS
+        emoji_pattern = re.compile("["
+                                   u"\U0001F600-\U0001F64F"  # emoticons
+                                   u"\U0001F300-\U0001F5FF"  # symbols & pictographs
+                                   u"\U0001F680-\U0001F6FF"  # transport & map symbols
+                                   u"\U0001F700-\U0001F77F"  # alchemical symbols
+                                   u"\U0001F780-\U0001F7FF"  # Geometric Shapes
+                                   u"\U0001F800-\U0001F8FF"  # Supplemental Arrows-C
+                                   u"\U0001F900-\U0001F9FF"  # Supplemental Symbols and Pictographs
+                                   u"\U0001FA00-\U0001FA6F"  # Chess Symbols
+                                   u"\U0001FA70-\U0001FAFF"  # Symbols and Pictographs Extended-A
+                                   u"\U00002702-\U000027B0"  # Dingbats
+                                   u"\U000024C2-\U0001F251" 
+                                   "]+", flags=re.UNICODE)
+        formatted_text = emoji_pattern.sub(r'', formatted_text)
         
         # Wrap in speak tags
         formatted_text = f"<speak>{formatted_text}</speak>"
