@@ -1,0 +1,7 @@
+Time,Latitude_Longitude,Latitude,Longitude,Latitude_Longitude_Clean,timestamp,Cluster,City,State,Country
+2025-02-13 20:58:58+00:00,"42.35, -71.093",42.35,-71.093,"42.35, -71.093",2025-02-13 20:58:58+00:00,-1,Boston,Massachusetts,United States
+2025-02-13 19:33:46+00:00,"42.351, -71.092",42.351,-71.092,"42.351, -71.092",2025-02-13 19:33:46+00:00,-1,Boston,Massachusetts,United States
+2025-02-13 19:25:12+00:00,"42.361, -71.087",42.361,-71.087,"42.361, -71.087",2025-02-13 19:25:12+00:00,-1,Cambridge,Massachusetts,United States
+2025-02-13 17:29:18+00:00,"42.36, -71.089",42.36,-71.089,"42.36, -71.089",2025-02-13 17:29:18+00:00,-1,Cambridge,Massachusetts,United States
+2025-02-13 16:00:57+00:00,"42.36, -71.093",42.36,-71.093,"42.36, -71.093",2025-02-13 16:00:57+00:00,-1,Cambridge,Massachusetts,United States
+2025-02-13 15:48:05+00:00,"42.375, -71.097",42.375,-71.097,"42.375, -71.097",2025-02-13 15:48:05+00:00,0,Somerville,Massachusetts,United States
