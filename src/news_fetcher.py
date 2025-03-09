@@ -26,6 +26,10 @@ class NewsFetcher:
             'kathimerini_en': {
                 'url': 'https://www.ekathimerini.com/rss/',
                 'language': 'el'
+            },
+            'sigmalive': {
+                'url': 'http://www.sigmalive.com/rss/latest/7',
+                'language': 'el'
             }
         }
     
@@ -105,7 +109,7 @@ class NewsFetcher:
         
         for source_id, source_info in self.sources.items():
             try:
-                print(f"Fetching from {source_id}...")
+                # print(f"Fetching from {source_id}...")
                 feed = feedparser.parse(source_info['url'])
                 
                 if feed.get('status', 0) == 404:
@@ -154,7 +158,7 @@ class NewsFetcher:
                 print(f"Error fetching from {source_id}: {str(e)}")
                 continue
         
-        print(f"Found {len(all_articles)} articles for {target_date}")
+        # print(f"Found {len(all_articles)} articles for {target_date}")
         return all_articles
     
     def _detect_category(self, title: str, description: str) -> str:

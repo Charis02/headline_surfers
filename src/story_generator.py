@@ -6,8 +6,8 @@ class StoryGenerator:
     def __init__(self, api_key: str):
         self.api_key = api_key
         self.base_url = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent"
-        print(f"API key: {self.api_key}")
-    def generate_story(self, articles: List[Dict]) -> str:
+        
+    def generate_story(self, articles: List[Dict], date: str) -> str:
         """
         Generate a Gen Z style story from the news articles in Greek.
         
@@ -34,63 +34,35 @@ class StoryGenerator:
             # Prepare the context from articles
             context = self._prepare_context(articles)
             
-            # Enhanced Greek prompt with stronger hook emphasis
-            prompt = """Είσαι ένας κορυφαίος Έλληνας Gen Z content creator με εκατομμύρια followers. Μετατρέπεις επίσημες ειδήσεις σε viral περιεχόμενο στα ελληνικά για ένα ψηφιακό avatar.
+            prompt = """You are a Gen Z content creator who needs to transform formal news into engaging, 
+            casual Greek content for a digital avatar to present. Use modern Greek slang, emojis, and Gen Z speaking style. 
+            Keep the content informative but make it sound like a friend telling a story.
+            The story should be around 1-2 minutes when spoken.
 
-            ΕΝΑΡΞΗ ΜΕ ΔΥΝΑΤΟ HOOK:
-            Ξεκίνα ΠΑΝΤΑ με ένα από τα παρακάτω για να "κολλήσεις" αμέσως το κοινό:
-            - Μια συγκλονιστική δήλωση: "Αυτό που μόλις έμαθα θα σας αφήσει άφωνους!"
-            - Μια αμφιλεγόμενη ερώτηση: "Ποιος είπε ότι η [τρέχον θέμα] δεν μπορεί να γίνει πιο τρελή;"
-            - Μια έκπληξη: "Plot twist! Η [είδηση] δεν είναι καθόλου αυτό που νομίζετε!"
-            - Μια πρόκληση: "Στοίχημα ότι δεν ξέρετε τι έγινε με [θέμα]"
-            - Μια αποκάλυψη: "Μόλις έσκασε η ΑΠΟΛΥΤΗ βόμβα για [θέμα]"
-            - Μια τάση: "Το πιο viral θέμα αυτή τη στιγμή; [είδηση] και θα σας πω γιατί!"
-            
-            Το hook ΠΡΕΠΕΙ να είναι στα πρώτα 10-15 δευτερόλεπτα και να χρησιμοποιεί [ΕΜΦΑΣΗ] ή [ΕΝΘΟΥΣΙΑΣΜΟΣ].
+            Use the following markers in the text:
+            - [PAUSE] for natural pauses between topics
+            - [EMPHASIS] for words that should be emphasized
+            - [EXCITED] for excited tone
+            - [SERIOUS] for serious tone
+            - [CURIOUS] for curious/questioning tone
+            - [SMILE] for moments where the avatar should smile
+            - [THINKING] for contemplative moments
 
-            ΣΤΥΛ ΓΡΑΦΗΣ:
-            - Χρησιμοποίησε αυθεντική ελληνική αργκό της Γενιάς Z: "μόρτης", "φάση", "άκυρο", "τρελό vibe", "σκίζει", "μας τελείωσε", "ό,τι να'ναι", "μποτάρω", "κριντζάρω"
-            - Πρόσθεσε emojis στρατηγικά (3-5 συνολικά) που χρησιμοποιούν οι Έλληνες Gen Z: 💀, 🤌, 👀, 🔥, 💯
-            - Γράψε σαν να κάνεις voice note σε κολλητό, με χαλαρό αλλά έξυπνο τόνο
-            - Χρησιμοποίησε μικρές προτάσεις και μίξη ελληνικών-greeklish: "btw", "omg", "literally", "mood", "vibe check"
-            - Κάνε αναφορές σε τρέχοντα ελληνικά memes, τάσεις TikTok, ή viral στιγμές της ελληνικής ποπ κουλτούρας
-            - Χρησιμοποίησε ρητορικές ερωτήσεις και διαδραστικά στοιχεία: "Φαντάσου να...", "Ποιος θα το περίμενε;", "Εσείς τι λέτε;"
-            - Το περιεχόμενο πρέπει να διαρκεί περίπου 1-2 λεπτά όταν διαβάζεται φωναχτά
-
-            ΔΟΜΗ ΠΕΡΙΕΧΟΜΕΝΟΥ:
-            - Μετά το hook, οργάνωσε το περιεχόμενο σε 2-3 διακριτές ενότητες με ομαλές μεταβάσεις
-            - Πρόσθεσε μια προσωπική άποψη ή hot take για κάθε είδηση
-            - Κλείσε με ένα έξυπνο συμπέρασμα ή call-to-action που προκαλεί συζήτηση
-
-            ΔΕΙΚΤΕΣ ΣΥΝΑΙΣΘΗΜΑΤΩΝ:
-            Χρησιμοποίησε τους παρακάτω δείκτες φυσικά μέσα στο κείμενο:
-            - [ΠΑΥΣΗ] για φυσικές παύσεις μεταξύ θεμάτων
-            - [ΕΜΦΑΣΗ] για λέξεις που πρέπει να τονιστούν
-            - [ΕΝΘΟΥΣΙΑΣΜΟΣ] για ενθουσιώδη τόνο
-            - [ΣΟΒΑΡΟΤΗΤΑ] για σοβαρό τόνο
-            - [ΠΕΡΙΕΡΓΕΙΑ] για περίεργο/ερωτηματικό τόνο
-            - [ΧΑΜΟΓΕΛΟ] για στιγμές που το avatar πρέπει να χαμογελάσει
-            - [ΣΚΕΨΗ] για στοχαστικές στιγμές
-            - [ΕΙΡΩΝΕΙΑ] για ειρωνικά σχόλια
-            - [ΕΚΠΛΗΞΗ] για έκπληκτες αντιδράσεις
-
-            Οι σημερινές κορυφαίες ειδήσεις είναι:
+            Here are today's top news articles:
             """ + context + """
             
-            Δημιούργησε μια συναρπαστική ιστορία που συνδυάζει αυτές τις ειδήσεις με τρόπο που θα κάνει viral στο ελληνικό TikTok και Instagram.
-            Το περιεχόμενο πρέπει να είναι αυθεντικό, να μην ακούγεται σαν μετάφραση, και να χρησιμοποιεί φυσικά την ελληνική γλώσσα όπως τη μιλάει η Γενιά Z.
+            Create a compelling story that combines these news items in an engaging way for Greek Gen Z audience.
+            Use appropriate Greek Gen Z slang and style. Include the emotion markers naturally throughout the text
+            to guide the avatar's presentation.
             
-            Η ιστορία ΠΡΕΠΕΙ:
-            1. Να ΞΕΚΙΝΑ με ένα εντυπωσιακό hook που θα κάνει τον ακροατή να μείνει μέχρι το τέλος
-            2. Να περιλαμβάνει τουλάχιστον 6 διαφορετικούς δείκτες συναισθημάτων
-            3. Να είναι μεταξύ 150-450 λέξεων
-            4. Να χρησιμοποιεί [ΣΟΒΑΡΟΤΗΤΑ] για πολιτικές/οικονομικές ειδήσεις
-            5. Να χρησιμοποιεί [ΕΝΘΟΥΣΙΑΣΜΟΣ] για θετικές εξελίξεις
-            6. Να περιλαμβάνει [ΠΑΥΣΗ] μεταξύ θεμάτων
-            7. Να χρησιμοποιεί [ΕΜΦΑΣΗ] για βασικά σημεία ή στατιστικά
-            8. Να περιέχει τουλάχιστον 2 αναφορές σε σύγχρονη ελληνική ποπ κουλτούρα
-            9. Να χρησιμοποιεί τουλάχιστον 3 διαφορετικές εκφράσεις της ελληνικής Gen Z αργκό
-            10. Να έχει έναν τίτλο που θα μπορούσε να είναι clickbait στο ελληνικό TikTok"""
+            The story MUST:
+            1. Include at least 3 emotion markers
+            2. Be between 150-450 words long
+            3. Use [SERIOUS] for political/economic news
+            4. Use [EXCITED] for positive developments
+            5. Use [THINKING] for analysis/statistics
+            6. Include [PAUSE] between topics
+            7. Use [EMPHASIS] for key points or statistics"""
             
             # Make the API request
             response = requests.post(
@@ -115,7 +87,7 @@ class StoryGenerator:
                 story = result['candidates'][0]['content']['parts'][0]['text'].strip()
                 
                 # Verify story meets requirements
-                if not any(marker in story for marker in ['[ΠΑΥΣΗ]', '[ΕΜΦΑΣΗ]', '[ΕΝΘΟΥΣΙΑΣΜΟΣ]', '[ΣΟΒΑΡΟΤΗΤΑ]', '[ΠΕΡΙΕΡΓΕΙΑ]', '[ΧΑΜΟΓΕΛΟ]', '[ΣΚΕΨΗ]', '[ΕΙΡΩΝΕΙΑ]', '[ΕΚΠΛΗΞΗ]']):
+                if not any(marker in story for marker in ['[PAUSE]', '[EMPHASIS]', '[EXCITED]', '[SERIOUS]', '[CURIOUS]', '[SMILE]', '[THINKING]']):
                     raise Exception("Error generating story: Generated content does not contain required emotion markers")
                     
                 words = len(story.split())
